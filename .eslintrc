@@ -1,0 +1,75 @@
+{
+  "env": {
+    "jest": true
+  },
+  "plugins": ["eslint-plugin-react"],
+  "parser": "babel-eslint",
+  "rules": {
+    "no-unused-vars": [
+      "error",
+      { "vars": "all", "args": "after-used", "ignoreRestSiblings": false }
+    ],
+    "react/jsx-uses-react": 1,
+    "react/jsx-uses-vars": 1,
+    "react/react-in-jsx-scope": 1,
+    "object-curly-spacing": ["error", "always"],
+    "arrow-parens": ["error", "always"],
+    "arrow-spacing": ["error", { "before": true, "after": true }],
+    "comma-spacing": ["error", { "before": false, "after": true }],
+    "constructor-super": "error",
+    "eol-last": ["error", "always"],
+    "func-style": ["error", "declaration", { "allowArrowFunctions": true }],
+    "prefer-const": [
+      "error",
+      { "destructuring": "any", "ignoreReadBeforeAssign": false }
+    ],
+    "no-duplicate-imports": ["error", { "includeExports": true }],
+    "prefer-destructuring": [
+      "error",
+      {
+        "VariableDeclarator": {
+          "array": false,
+          "object": false
+        },
+        "AssignmentExpression": {
+          "array": true,
+          "object": true
+        }
+      },
+      {
+        "enforceForRenamedProperties": false
+      }
+    ],
+    "indent": [
+      "error",
+      2,
+      {
+        "MemberExpression": 1,
+        "ObjectExpression": 1,
+        "ImportDeclaration": 1,
+        "SwitchCase": 1,
+        "flatTernaryExpressions": true,
+        "ignoreComments": true
+      }
+    ],
+    "semi": ["error", "always"],
+    "quotes": ["error", "single", { "avoidEscape": true }],
+    "comma-dangle": [
+      "error",
+      {
+        "arrays": "only-multiline",
+        "objects": "always-multiline",
+        "imports": "always-multiline",
+        "exports": "only-multiline",
+        "functions": "ignore"
+      }
+    ],
+    "arrow-body-style": [
+      1,
+      "as-needed",
+      {
+        "requireReturnForObjectLiteral": false
+      }
+    ]
+  }
+}
