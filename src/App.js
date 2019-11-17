@@ -53,6 +53,8 @@ function App() {
         }}
         calendarProps={{
           onSelectDate: fakeFetch,
+          hasKnob: true,
+          knobColor: 'rgba(251, 131, 51, 1)',
           items: ['2019-11-15', '2019-11-21'],
           selectedDateBackgroundColor: 'rgba(251, 131, 51, 1)',
           selectedWeekBackgroundColor: 'rgba(251, 131, 51, 0.1)',

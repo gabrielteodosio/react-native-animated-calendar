@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import { FlatList, View, ActivityIndicator } from 'react-native';
+import { FlatList, Text, View, ActivityIndicator } from 'react-native';
 
 import Calendar, { CalendarPropTypes } from './Components/Calendar';
 
@@ -16,20 +16,11 @@ function Agenda({
   renderItem,
   activityIndicatorProps,
 }) {
-  const [collapsed, setCollapsed] = useState(false);
-  const [lastSelectedDate, setLastSelectedDate] = useState(null);
-
   function renderScrollItems({ item, index }) {
     return renderItem(item, index);
   }
 
   function handleSelectDate(date) {
-    if (!lastSelectedDate || lastSelectedDate !== date) {
-      setCollapsed(true);
-    } else {
-      setCollapsed(false);
-    }
-
     if (typeof calendarProps.onSelectDate === 'function') {
       calendarProps.onSelectDate(date);
     } else {
@@ -41,7 +32,6 @@ function Agenda({
     <View style={{ flex: 1 }}>
       <Calendar
         {...calendarProps}
-        collapsed={collapsed}
         onSelectDate={handleSelectDate}
       />
       {loading ? (

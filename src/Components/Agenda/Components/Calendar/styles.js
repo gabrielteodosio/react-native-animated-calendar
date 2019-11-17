@@ -1,7 +1,7 @@
 import { StyleSheet } from 'react-native';
 
 const styles = StyleSheet.create({
-  container: {},
+  container: { borderBottomColor: 'rgba(0,0,0,.1)', borderBottomWidth: 1, paddingVertical: 5 },
   headerContainer: { flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 15 },
   headerMonth: { fontSize: 18, fontWeight: 'bold', textAlign: 'center' },
   headerYear: { fontSize: 18, textAlign: 'center' },
@@ -20,6 +20,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     flexDirection: 'row',
     paddingHorizontal: 15,
+  },
+  knob: {
+    height: 8,
+    width: 50,
+    marginTop: 5,
+    borderRadius: 4,
+    alignSelf: 'center',
   },
 });
 

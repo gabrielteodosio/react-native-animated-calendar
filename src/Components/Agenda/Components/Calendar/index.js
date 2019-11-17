@@ -82,7 +82,8 @@ function Calendar({
   selectedDateBackgroundColor,
   selectedWeekBackgroundColor,
   items,
-  collapsed,
+  hasKnob,
+  knobColor,
   ...props
 }) {
   const [activeDate, setActiveDate] = useState(moment());
@@ -194,8 +195,7 @@ function Calendar({
           const isWeekDays = rowIndex === 0;
 
           // If `isWeekDay` is true, then it's not a Touchable component
-          const Touchable = isWeekDays ? View : TouchableOpacity;
-
+          const Touchable = isWeekDays || item === -1 ? View : TouchableOpacity;
 
           // A unique day
           return (
@@ -229,9 +229,11 @@ function Calendar({
 
         return (
           <View
-            collapsable
             key={`row-${rowIndex}`}
-            style={{ height: !rowSelected && !expanded && rowIndex !== 0 ? 0 : 40 }}
+            style={{
+              height: !rowSelected && !expanded && rowIndex !== 0 ? 0 : 40,
+              marginBottom: rowIndex === 0 ? 5 : undefined,
+            }}
           >
             {/* Week line */}
             <View
@@ -250,6 +252,14 @@ function Calendar({
           </View>
         );
       })}
+
+      {hasKnob && (
+        /* Knob Component */
+        <TouchableOpacity
+          onPress={changeLayout}
+          style={{ ...styles.knob, backgroundColor: knobColor }}
+        />
+      )}
     </View>
   );
 }
@@ -269,7 +279,8 @@ export const CalendarPropTypes = Calendar.propTypes = {
   leftArrow: PropTypes.element,
   selectedDateBackgroundColor: PropTypes.string,
   selectedWeekBackgroundColor: PropTypes.string,
-  collapsed: PropTypes.bool,
+  hasKnob: PropTypes.bool,
+  knobColor: PropTypes.string,
 };
 
 export const CalendarDefaultProps = Calendar.defaultProps = {
@@ -288,7 +299,8 @@ export const CalendarDefaultProps = Calendar.defaultProps = {
   dayStyle: { borderRadius: 20, overflow: 'hidden' },
   selectedDateBackgroundColor: 'rgba(0,0,0,1)',
   selectedWeekBackgroundColor: 'rgba(0,0,0,.1)',
-  collapsed: false,
+  hasKnob: false,
+  knobColor: 'rgba(0,0,0,1)',
 };
 
 export default Calendar;
