@@ -2,14 +2,26 @@ import { StyleSheet } from 'react-native';
 
 const styles = StyleSheet.create({
   container: {
+    zIndex: 2,
     paddingVertical: 5,
     borderBottomWidth: 1,
-    zIndex: 2,
     borderBottomColor: 'rgba(0,0,0,.1)',
   },
-  headerContainer: { flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 15 },
-  headerMonth: { fontSize: 18, fontWeight: 'bold', textAlign: 'center' },
-  headerYear: { fontSize: 18, textAlign: 'center' },
+  headerContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingHorizontal: 15,
+    minHeight: 40,
+  },
+  headerMonth: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
+  headerYear: {
+    fontSize: 18,
+    textAlign: 'center',
+  },
   arrowLeftContainer: { padding: 10 },
   arrowRightContainer: { padding: 10 },
   day: {

@@ -1,10 +1,11 @@
 import './Config/ReactotronConfig';
 
+import moment from 'moment';
 import React, { useState, useCallback, useEffect } from 'react';
 import { SafeAreaView, View, RefreshControl, Text, Image } from 'react-native';
 
+import { data } from './Utils/mock';
 import Agenda from './Components/Agenda';
-import moment from 'moment';
 
 const ITEM_HEIGHT = 80, ITEM_WIDTH = '100%';
 
@@ -67,66 +68,9 @@ function App() {
   }
 
   const refreshControl = (
-    <RefreshControl style={{ zIndex: -1 }} refreshing={refreshing} onRefresh={onRefresh} colors={['rgba(251, 131, 51, 1)']}/>
+    <RefreshControl style={{ zIndex: -1 }} refreshing={refreshing} onRefresh={onRefresh}
+                    colors={['rgba(251, 131, 51, 1)']}/>
   );
-
-  const data = [
-    {
-      name: 'Ricardo Silva',
-      location: 'Oka Gym',
-      status: 'Confirmado',
-      period: '2019-11-21 09:30',
-      profileImage: 'https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1100&q=80',
-    }, {
-      name: 'Amanda Neves',
-      location: 'Oka Gym',
-      status: 'A Confirmar',
-      period: '2019-11-21 13:30',
-      profileImage: 'https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1100&q=80',
-    }, {
-      name: 'Tiago Barros',
-      location: 'Oka Gym',
-      status: 'A Confirmar',
-      period: '2019-11-21 16:30',
-      profileImage: 'https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1100&q=80',
-    }, {
-      name: 'Ricardo Silva',
-      location: 'Oka Gym',
-      status: 'Confirmado',
-      period: '2019-11-21 09:30',
-      profileImage: 'https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1100&q=80',
-    }, {
-      name: 'Amanda Neves',
-      location: 'Oka Gym',
-      status: 'A Confirmar',
-      period: '2019-11-21 13:30',
-      profileImage: 'https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1100&q=80',
-    }, {
-      name: 'Tiago Barros',
-      location: 'Oka Gym',
-      status: 'A Confirmar',
-      period: '2019-11-21 16:30',
-      profileImage: 'https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1100&q=80',
-    }, {
-      name: 'Ricardo Silva',
-      location: 'Oka Gym',
-      status: 'Confirmado',
-      period: '2019-11-21 09:30',
-      profileImage: 'https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1100&q=80',
-    }, {
-      name: 'Amanda Neves',
-      location: 'Oka Gym',
-      status: 'A Confirmar',
-      period: '2019-11-21 13:30',
-      profileImage: 'https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1100&q=80',
-    }, {
-      name: 'Tiago Barros',
-      location: 'Oka Gym',
-      status: 'A Confirmar',
-      period: '2019-11-21 16:30',
-      profileImage: 'https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1100&q=80',
-    },
-  ];
 
   const items = [...new Set(data.map((e) => moment(e.period).format('YYYY-MM-DD')))];
 
@@ -135,16 +79,26 @@ function App() {
       <Agenda
         data={data}
         items={items}
+        hasToggleButton
+        dataStyle={'light'}
         loading={fetchingData}
         renderItem={renderItem}
         refreshControl={refreshControl}
+        toggleButtonIcon={(isExpanded) => {
+          console.tron.log({ isExpanded });
+          return (
+            <Text style={{ color: isExpanded ? 'rgba(251, 131, 51, 1)' : 'black' }}>Hello</Text>
+          );
+        }}
+        vocabulary={{
+          weekDays: ['D', 'S', 'T', 'Q', 'Q', 'S', 'S'],
+        }}
         activityIndicatorProps={{
           size: 'large',
           style: { flex: 1 },
           color: 'rgba(251, 131, 51, 1)',
         }}
         calendarProps={{
-          hasKnob: true,
           onSelectDate: fakeFetch,
           knobColor: 'rgba(251, 131, 51, 1)',
           selectedDateBackgroundColor: 'rgba(251, 131, 51, 1)',

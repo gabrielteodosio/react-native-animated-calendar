@@ -5,16 +5,6 @@ import { View, Text, TouchableOpacity, LayoutAnimation, UIManager } from 'react-
 
 import styles from './styles';
 
-// Only used for vocabulary
-const months = ['Janeiro', 'Fevereiro', 'Março', 'Abril',
-  'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro',
-  'Novembro', 'Dezembro'];
-
-// Only used for vocabulary
-const weekDays = [
-  'Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb',
-];
-
 // Get actual year
 const year = moment().year();
 
@@ -44,7 +34,7 @@ const nDays = [
  * @param moment
  * @returns {[*]}
  */
-function generateMatrix(moment) {
+function generateMatrix(weekDays, moment) {
   const matrix = [weekDays];
 
   const month = moment.month();
@@ -68,205 +58,272 @@ function generateMatrix(moment) {
   return matrix;
 }
 
-function Calendar({
-  onSelectDate,
-  leftArrow,
-  rightArrow,
-  style,
-  headerContainerStyle,
-  headerMonthStyle,
-  headerYearStyle,
-  arrowLeftContainerStyle,
-  arrowRightContainerStyle,
-  dayStyle,
-  selectedDateBackgroundColor,
-  selectedWeekBackgroundColor,
-  items,
-  hasKnob,
-  knobColor,
-  ...props
-}) {
-  const [activeDate, setActiveDate] = useState(moment());
-  const [selectedRow, setSelectedRow] = useState(undefined);
-  const [selectedDate, setSelectedDate] = useState(moment());
-  const [matrix, setMatrix] = useState(generateMatrix(activeDate));
-  const [expanded, setExpanded] = useState(true);
+class Calendar extends React.Component {
 
-  useEffect(() => {
-    handleDatePress(activeDate.date());
+  constructor(props) {
+    super(props);
+
+    const activeDate = moment();
+    const selectedDate = moment();
+    const { vocabulary: { weekDays } } = props;
+
+    this.state = {
+      activeDate,
+      selectedDate,
+      matrix: generateMatrix(weekDays, activeDate),
+      expanded: props.defaultExpanded,
+    };
 
     if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
       UIManager.setLayoutAnimationEnabledExperimental(true);
     }
-  }, []);
+  }
 
-  function handleDatePress(item, rowIndex) {
+  componentDidMount() {
+    const { activeDate } = this.state;
+    this.handleDatePress(activeDate.date());
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (prevState.expanded !== this.state.expanded) {
+      this.props.onChangeExpanded(this.state.expanded);
+    }
+  }
+
+  setActiveDate = (activeDate, callback) => this.setState({ activeDate }, callback);
+  setSelectedDate = (selectedDate, callback) => this.setState({ selectedDate }, callback);
+  setMatrix = (matrix, callback) => this.setState({ matrix }, callback);
+  getIsExpanded = () => {
+    return this.state.expanded;
+  };
+
+  handleDatePress = (item, rowIndex) => {
+    const { activeDate, selectedDate } = this.state;
+    const { onSelectDate } = this.props;
+
     const date = moment([activeDate.year(), activeDate.month(), item]);
 
     if (date.isSame(selectedDate)) {
-      changeLayout();
+      this.changeLayout();
     } else {
       onSelectDate(date);
-      setSelectedDate(date);
-      setSelectedRow(rowIndex);
+      this.setSelectedDate(date);
     }
-  }
+  };
 
-  function handleNextPress() {
-    setActiveDate(activeDate.add(moment.duration(1, 'month')));
-    setMatrix(generateMatrix(activeDate));
-  }
+  handleNextPress = () => {
+    const { activeDate } = this.state;
+    const { vocabulary: { weekDays } } = this.props;
 
-  function handlePreviousPress() {
-    setActiveDate(activeDate.subtract(moment.duration(1, 'month')));
-    setMatrix(generateMatrix(activeDate));
-  }
+    this.setActiveDate(activeDate.add(moment.duration(1, 'month')));
+    this.setMatrix(generateMatrix(weekDays, activeDate));
+  };
+
+  handlePreviousPress = () => {
+    const { activeDate } = this.state;
+    const { vocabulary: { weekDays } } = this.props;
+
+    this.setActiveDate(activeDate.subtract(moment.duration(1, 'month')));
+    this.setMatrix(generateMatrix(weekDays, activeDate));
+  };
 
   // Collapse and Reverse
-  function changeLayout() {
-    LayoutAnimation.configureNext(LayoutAnimation.Presets.spring);
-    setExpanded(!expanded);
-  }
+  changeLayout = () => {
+    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+    this.setState((oldState) => ({ expanded: !oldState.expanded }));
+  };
+
 
   // TODO: Implement a better way of rendering dots
-  function renderDot(item) {
+  renderDot = (item) => {
+    const { activeDate } = this.state;
+    const { markers } = this.props;
+
     const date = moment([activeDate.year(), activeDate.month(), item]).format('YYYY-MM-DD');
 
-    if (items.includes(date)) {
-      return <View style={{
-        width: 4,
-        bottom: 5,
-        height: 4,
-        borderRadius: 2,
-        position: 'absolute',
-        backgroundColor: 'rgb(255, 208, 0)',
-      }}/>;
+    if (markers.includes(date)) {
+      return (
+        <View style={{
+          width: 4,
+          bottom: 5,
+          height: 4,
+          borderRadius: 2,
+          position: 'absolute',
+          backgroundColor: 'rgb(255, 208, 0)',
+        }}/>
+      );
     }
 
     return null;
-  }
+  };
 
-  return (
-    <View style={{ ...styles.container, ...style }}>
-      <View style={{ ...styles.headerContainer, ...headerContainerStyle }}>
-        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-          <Text style={{ ...styles.headerMonth, ...headerMonthStyle }}>
-            {months[activeDate.month()]} &nbsp;
-          </Text>
-          <Text style={{ ...styles.headerYear, ...headerYearStyle }}>
-            {activeDate.year()}
-          </Text>
+  render() {
+    const {
+      leftArrow,
+      rightArrow,
+      style,
+      headerContainerStyle,
+      headerMonthStyle,
+      headerYearStyle,
+      arrowLeftContainerStyle,
+      arrowRightContainerStyle,
+      dayStyle,
+      selectedDateBackgroundColor,
+      selectedWeekBackgroundColor,
+      hasKnob,
+      knobColor,
+      dataStyle,
+      vocabulary: { months },
+    } = this.props;
+
+    const { activeDate, selectedDate, expanded, matrix } = this.state;
+
+    return (
+      <View style={{ ...styles.container, ...style }}>
+        <View style={{ ...styles.headerContainer, ...headerContainerStyle }}>
+          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <Text style={[
+              { ...styles.headerMonth, ...headerMonthStyle },
+              { color: dataStyle === 'light' ? 'black' : 'white' },
+            ]}>
+              {months[activeDate.month()]} &nbsp;
+            </Text>
+            <Text style={[
+              { ...styles.headerYear, ...headerYearStyle },
+              { color: dataStyle === 'light' ? 'black' : 'white' },
+            ]}>
+              {activeDate.year()}
+            </Text>
+          </View>
+
+          {typeof this.props.renderControlButtons === 'function' ?
+            this.props.renderControlButtons(this.handlePreviousPress, this.handleNextPress) : (
+              expanded ? (
+                <View style={{ flexDirection: 'row', minHeight: 37, maxHeight: 40 }}>
+                  <TouchableOpacity
+                    disabled={!expanded}
+                    onPress={this.handlePreviousPress}
+                    style={{ ...styles.arrowLeftContainer, ...arrowLeftContainerStyle }}
+                  >
+                    {leftArrow || (
+                      <Text style={{ color: 'black' }}>
+                        {'<'}
+                      </Text>
+                    )}
+                  </TouchableOpacity>
+
+                  <TouchableOpacity
+                    disabled={!expanded}
+                    onPress={this.handleNextPress}
+                    style={{ ...styles.arrowRightContainer, ...arrowRightContainerStyle }}
+                  >
+                    {rightArrow || (
+                      <Text style={{ color: dataStyle === 'light' ? 'rgb(19, 27, 34)' : 'rgb(232, 232, 232)' }}>
+                        {'>'}
+                      </Text>
+                    )}
+                  </TouchableOpacity>
+                </View>
+              ) : null
+            )}
         </View>
 
-        {props.renderControlButtons ?
-          props.renderControlButtons(handlePreviousPress, handleNextPress) : (
-            <View style={{ flexDirection: 'row' }}>
-              <TouchableOpacity
-                onPress={handlePreviousPress}
-                style={{ ...styles.arrowLeftContainer, ...arrowLeftContainerStyle }}
+        {/* Calendar rendering */}
+        {matrix.map((row, rowIndex) => {
+          const rowSelected = selectedDate.month() === activeDate.month() &&
+            selectedDate.year() === activeDate.year() &&
+            row.includes(selectedDate.date());
+
+          const rowItems = row.map((item, colIndex) => {
+            // item is the date on a slot
+            const itemSelected =
+              item === selectedDate.date() &&
+              selectedDate.month() === activeDate.month() &&
+              selectedDate.year() === activeDate.year();
+
+            // Sunday, Monday, Tuesday, Wednesday, Thursday, Friday
+            const isWeekDays = rowIndex === 0;
+
+            // If `isWeekDay` is true, then it's not a Touchable component
+            const Touchable = isWeekDays || item === -1 ? View : TouchableOpacity;
+
+            const itemStyle = !itemSelected ?
+              {
+                color: isWeekDays ?
+                  dataStyle === 'light' ? 'rgba(19, 27, 34, 0.2)' : 'rgba(232, 232, 232, 0.2)' :
+                  dataStyle === 'light' ? 'rgb(19, 27, 34)' : 'rgb(232, 232, 232)',
+              } :
+              { color: dataStyle === 'light' ? 'rgb(19, 27, 34)' : 'rgb(232, 232, 232)', fontWeight: 'bold' };
+
+            // A unique day
+            return (
+              <Touchable
+                style={{ flex: 1 }}
+                key={`col-${colIndex}`}
+                onPress={() => this.handleDatePress(item, rowIndex)}
               >
-                {leftArrow || <Text>{'<'}</Text>}
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                onPress={handleNextPress}
-                style={{ ...styles.arrowRightContainer, ...arrowRightContainerStyle }}
-              >
-                {rightArrow || <Text>{'>'}</Text>}
-              </TouchableOpacity>
-            </View>
-          )}
-      </View>
-
-      {/* Calendar rendering */}
-      {matrix.map((row, rowIndex) => {
-        const rowSelected = selectedDate.month() === activeDate.month() &&
-          selectedDate.year() === activeDate.year() &&
-          row.includes(selectedDate.date());
-
-        const rowItems = row.map((item, colIndex) => {
-          // item is the date on a slot
-          const itemSelected =
-            item === selectedDate.date() &&
-            selectedDate.month() === activeDate.month() &&
-            selectedDate.year() === activeDate.year();
-
-          // Sunday, Monday, Tuesday, Wednesday, Thursday, Friday
-          const isWeekDays = rowIndex === 0;
-
-          // If `isWeekDay` is true, then it's not a Touchable component
-          const Touchable = isWeekDays || item === -1 ? View : TouchableOpacity;
-
-          // A unique day
-          return (
-            <Touchable
-              style={{ flex: 1 }}
-              key={`col-${colIndex}`}
-              onPress={() => handleDatePress(item, rowIndex)}
-            >
-              <View
-                style={{
-                  ...styles.day, ...dayStyle,
-                  height: !rowSelected && !expanded && rowIndex !== 0 ? 0 : 40,
-                  backgroundColor: itemSelected ? selectedDateBackgroundColor : undefined,
-                }}
-              >
-                <Text
-                  style={[
-                    itemSelected ?
-                      { color: '#fff', fontWeight: 'bold' } :
-                      { color: isWeekDays ? 'rgba(0,0,0,.2)' : 'rgba(0,0,0,1)' },
-                    { fontSize: 14 },
-                  ]}
+                <View
+                  style={{
+                    ...styles.day, ...dayStyle,
+                    height: !rowSelected && !expanded && rowIndex !== 0 ? 0 : 40,
+                    backgroundColor: itemSelected ? selectedDateBackgroundColor : undefined,
+                  }}
                 >
-                  {item !== -1 ? item : undefined}
-                </Text>
-                {renderDot(item)}
-              </View>
-            </Touchable>
-          );
-        });
+                  <Text
+                    style={[
+                      itemStyle,
+                      { fontSize: 14 },
+                    ]}
+                  >
+                    {item !== -1 ? item : undefined}
+                  </Text>
+                  {this.renderDot(item)}
+                </View>
+              </Touchable>
+            );
+          });
 
-        return (
-          <View
-            key={`row-${rowIndex}`}
-            style={{
-              height: !rowSelected && !expanded && rowIndex !== 0 ? 0 : 40,
-              marginBottom: rowIndex === 0 ? 5 : undefined,
-            }}
-          >
-            {/* Week line */}
+          return (
             <View
+              key={`row-${rowIndex}`}
               style={{
-                ...styles.week,
-                backgroundColor: rowSelected ? selectedWeekBackgroundColor : undefined,
+                height: !rowSelected && !expanded && rowIndex !== 0 ? 0 : 40,
+                marginBottom: rowIndex === 0 ? 5 : undefined,
               }}
             >
-              {rowItems}
+              {/* Week line */}
+              <View
+                style={{
+                  ...styles.week,
+                  backgroundColor: rowSelected ? selectedWeekBackgroundColor : undefined,
+                }}
+              >
+                {rowItems}
+              </View>
+
+              {/* Simple horizontal bar */}
+              {rowIndex === 0 && (
+                <View style={{ height: 1, backgroundColor: 'rgba(0,0,0,.1)', width: '100%' }}/>
+              )}
             </View>
+          );
+        })}
 
-            {/* Simple horizontal bar */}
-            {rowIndex === 0 && (
-              <View style={{ height: 1, backgroundColor: 'rgba(0,0,0,.1)', width: '100%' }}/>
-            )}
-          </View>
-        );
-      })}
-
-      {hasKnob && (
-        /* Knob Component */
-        <TouchableOpacity
-          onPress={changeLayout}
-          style={{ ...styles.knob, backgroundColor: knobColor }}
-        />
-      )}
-    </View>
-  );
+        {hasKnob && (
+          /* Knob Component */
+          <TouchableOpacity
+            onPress={this.changeLayout}
+            style={{ ...styles.knob, backgroundColor: knobColor }}
+          />
+        )}
+      </View>
+    );
+  }
 }
 
 export const CalendarPropTypes = Calendar.propTypes = {
   onSelectDate: PropTypes.func,
-  items: PropTypes.array,
+  markers: PropTypes.array,
   renderControlButtons: PropTypes.func,
   style: PropTypes.object,
   headerContainerStyle: PropTypes.object,
@@ -281,12 +338,21 @@ export const CalendarPropTypes = Calendar.propTypes = {
   selectedWeekBackgroundColor: PropTypes.string,
   hasKnob: PropTypes.bool,
   knobColor: PropTypes.string,
+  defaultExpanded: PropTypes.bool,
+  hasToggleButton: PropTypes.bool,
+  toggleButtonIcon: PropTypes.element,
+  vocabulary: PropTypes.shape({
+    weekDays: PropTypes.arrayOf(PropTypes.string),
+    months: PropTypes.arrayOf(PropTypes.string),
+  }),
+  dataStyle: PropTypes.oneOf(['light', 'dark']),
+  onChangeExpanded: PropTypes.func.isRequired,
 };
 
 export const CalendarDefaultProps = Calendar.defaultProps = {
   onSelectDate: () => {
   },
-  items: [],
+  markers: [],
   renderControlButtons: undefined,
   rightArrow: undefined,
   leftArrow: undefined,
@@ -301,6 +367,18 @@ export const CalendarDefaultProps = Calendar.defaultProps = {
   selectedWeekBackgroundColor: 'rgba(0,0,0,.1)',
   hasKnob: false,
   knobColor: 'rgba(0,0,0,1)',
+  defaultExpanded: false,
+  hasToggleButton: true,
+  toggleButtonIcon: undefined,
+  vocabulary: {
+    months: ['Janeiro', 'Fevereiro', 'Março', 'Abril',
+      'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro',
+      'Novembro', 'Dezembro'],
+    weekDays: [
+      'Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb',
+    ],
+  },
+  dataStyle: 'light',
 };
 
 export default Calendar;

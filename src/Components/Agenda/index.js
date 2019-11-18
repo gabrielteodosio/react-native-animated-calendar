@@ -1,9 +1,35 @@
-import React, { useState } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
-import { FlatList, Text, View, ActivityIndicator } from 'react-native';
+import {
+  FlatList,
+  Text,
+  View,
+  Platform,
+  TouchableOpacity,
+  ActivityIndicator,
+  TouchableNativeFeedback,
+} from 'react-native';
 
-import Calendar, { CalendarPropTypes } from './Components/Calendar';
-import moment from 'moment';
+import Calendar, { CalendarDefaultProps, CalendarPropTypes } from './Components/Calendar';
+import styles from './styles';
+
+function TouchableAndroid({ disabled, onPress, useForeground, rippleColor, borderless, children, ...props }) {
+  return (
+    <TouchableNativeFeedback
+      {...{ onPress, useForeground, disabled }}
+      background={TouchableNativeFeedback.Ripple(rippleColor, borderless)}
+    >
+      <View {...props}>
+        {children}
+      </View>
+    </TouchableNativeFeedback>
+  );
+}
+
+const TouchableContainer = Platform.select({
+  ios: TouchableOpacity,
+  android: TouchableAndroid,
+});
 
 function Agenda({
   onSelectDate,
@@ -14,10 +40,17 @@ function Agenda({
   data,
   items,
   dataTitle,
-  onPressItem,
+  dataStyle,
   renderItem,
+  vocabulary,
+  hasToggleButton,
+  toggleButtonIcon,
+  appointmentListStyle,
   activityIndicatorProps,
 }) {
+  const calendarRef = useRef();
+  const [expanded, setExpanded] = useState(CalendarDefaultProps.defaultExpanded);
+
   function renderScrollItems({ item, index }) {
     return renderItem(item, index);
   }
@@ -30,12 +63,47 @@ function Agenda({
     }
   }
 
+  function toggleCalendar() {
+    calendarRef.current.changeLayout();
+  }
+
   return (
     <View style={{ flex: 1 }}>
+      <View
+        style={{ paddingHorizontal: 15, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}
+      >
+        <Text style={{ fontSize: 33, color: dataStyle === 'light' ? 'rgb(36, 42, 50)' : 'white' }}>
+          Agenda
+        </Text>
+        {hasToggleButton && toggleButtonIcon ? (
+          <View
+            style={{
+              overflow: 'hidden',
+              borderRadius: 20,
+            }}
+          >
+            <TouchableContainer
+              onPress={toggleCalendar}
+              style={{
+                height: 40,
+                width: 40,
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              {toggleButtonIcon(expanded)}
+            </TouchableContainer>
+          </View>
+        ) : null}
+      </View>
       <Calendar
         {...calendarProps}
+        ref={calendarRef}
         items={items}
+        dataStyle={dataStyle}
+        onChangeExpanded={setExpanded}
         onSelectDate={handleSelectDate}
+        vocabulary={{ ...CalendarDefaultProps.vocabulary, ...vocabulary }}
       />
       {loading ? (
         <ActivityIndicator {...activityIndicatorProps} />
@@ -51,7 +119,7 @@ function Agenda({
             refreshing={refreshing}
             renderItem={renderScrollItems}
             refreshControl={refreshControl}
-            style={{ flex: 1, paddingVertical: 5 }}
+            style={{ ...styles.appointmentList, ...appointmentListStyle }}
             keyExtractor={(item, index) => `$agenda-item-${index}`}
           />
         </>
@@ -65,9 +133,14 @@ Agenda.propTypes = {
   items: PropTypes.array,
   dataTitle: PropTypes.string,
   onSelectDate: PropTypes.func,
-  calendarProps: PropTypes.shape({
-    ...CalendarPropTypes,
-  }),
+  hasToggleButton: PropTypes.bool,
+  toggleButtonIcon: PropTypes.oneOfType([
+    PropTypes.func,
+    PropTypes.element
+  ]),
+  appointmentListStyle: PropTypes.object,
+  calendarProps: PropTypes.object,
+  dataStyle: PropTypes.oneOf(['light', 'dark']),
 };
 
 Agenda.defaultProps = {
@@ -75,6 +148,10 @@ Agenda.defaultProps = {
   },
   calendarProps: undefined,
   items: [],
+  hasToggleButton: true,
+  toggleButtonIcon: undefined,
+  appointmentListStyle: undefined,
+  dataStyle: 'light',
 };
 
 export default Agenda;
