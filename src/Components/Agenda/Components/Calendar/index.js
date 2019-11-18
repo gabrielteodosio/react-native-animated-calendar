@@ -105,11 +105,11 @@ function Calendar({
 
     if (date.isSame(selectedDate)) {
       changeLayout();
+    } else {
+      onSelectDate(date);
+      setSelectedDate(date);
+      setSelectedRow(rowIndex);
     }
-
-    onSelectDate(date);
-    setSelectedDate(date);
-    setSelectedRow(rowIndex);
   }
 
   function handleNextPress() {

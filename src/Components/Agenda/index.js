@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { FlatList, Text, View, ActivityIndicator } from 'react-native';
 
 import Calendar, { CalendarPropTypes } from './Components/Calendar';
+import moment from 'moment';
 
 function Agenda({
   onSelectDate,
@@ -11,6 +12,7 @@ function Agenda({
   refreshing,
   refreshControl,
   data,
+  items,
   dataTitle,
   onPressItem,
   renderItem,
@@ -32,6 +34,7 @@ function Agenda({
     <View style={{ flex: 1 }}>
       <Calendar
         {...calendarProps}
+        items={items}
         onSelectDate={handleSelectDate}
       />
       {loading ? (
@@ -39,7 +42,9 @@ function Agenda({
       ) : (
         <>
           {typeof dataTitle === 'string' ? (
-            <Text>{dataTitle}</Text>
+            <Text style={{ fontWeight: 'bold' }}>
+              {dataTitle}
+            </Text>
           ) : undefined}
           <FlatList
             data={data}
@@ -57,6 +62,7 @@ function Agenda({
 
 Agenda.propTypes = {
   data: PropTypes.array,
+  items: PropTypes.array,
   dataTitle: PropTypes.string,
   onSelectDate: PropTypes.func,
   calendarProps: PropTypes.shape({
@@ -68,6 +74,7 @@ Agenda.defaultProps = {
   onSelectDate: () => {
   },
   calendarProps: undefined,
+  items: [],
 };
 
 export default Agenda;

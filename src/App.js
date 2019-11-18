@@ -1,9 +1,10 @@
 import './Config/ReactotronConfig';
 
 import React, { useState, useCallback, useEffect } from 'react';
-import { SafeAreaView, View, RefreshControl, ActivityIndicator } from 'react-native';
+import { SafeAreaView, View, RefreshControl, Text, Image } from 'react-native';
 
 import Agenda from './Components/Agenda';
+import moment from 'moment';
 
 const ITEM_HEIGHT = 80, ITEM_WIDTH = '100%';
 
@@ -32,17 +33,108 @@ function App() {
   }, [refreshing]);
 
   function renderItem(item, index) {
-    return <View style={{ height: ITEM_HEIGHT, width: ITEM_WIDTH }}/>;
+    return (
+      <View style={{ width: ITEM_WIDTH, height: ITEM_HEIGHT, flexDirection: 'row', alignItems: 'center' }}>
+        {/* Date/time */}
+        <View style={{ width: 80, alignItems: 'center', height: '100%' }}>
+          <Text>{moment(item.period).format('HH:mm')}</Text>
+        </View>
+        {/* Content */}
+        <View style={{ flexDirection: 'row', padding: 10, backgroundColor: 'rgba(241, 245, 251, 0.4)' }}>
+          <Image
+            resizeMode={'contain'}
+            resizeMethod={'resize'}
+            source={{ uri: item.profileImage }}
+            style={{ width: 60, height: 60, borderRadius: 30 }}
+          />
+          <View style={{ flex: 1, marginLeft: 10 }}>
+            {/* Status Component */}
+            <View style={{ backgroundColor: 'rgb(189, 219, 1)', width: 110, borderRadius: 5 }}>
+              <Text style={{ textAlign: 'center', textTransform: 'uppercase' }}>
+                {item.status}
+              </Text>
+            </View>
+            <Text style={{ fontWeight: 'bold', fontSize: 20 }}>
+              {item.name}
+            </Text>
+            <Text style={{ fontSize: 14, color: 'rgba(19,27,34,0.5)', textTransform: 'uppercase' }}>
+              {item.location}
+            </Text>
+          </View>
+        </View>
+      </View>
+    );
   }
 
   const refreshControl = (
-    <RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={['rgba(251, 131, 51, 1)']}/>
+    <RefreshControl style={{ zIndex: -1 }} refreshing={refreshing} onRefresh={onRefresh} colors={['rgba(251, 131, 51, 1)']}/>
   );
+
+  const data = [
+    {
+      name: 'Ricardo Silva',
+      location: 'Oka Gym',
+      status: 'Confirmado',
+      period: '2019-11-21 09:30',
+      profileImage: 'https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1100&q=80',
+    }, {
+      name: 'Amanda Neves',
+      location: 'Oka Gym',
+      status: 'A Confirmar',
+      period: '2019-11-21 13:30',
+      profileImage: 'https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1100&q=80',
+    }, {
+      name: 'Tiago Barros',
+      location: 'Oka Gym',
+      status: 'A Confirmar',
+      period: '2019-11-21 16:30',
+      profileImage: 'https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1100&q=80',
+    }, {
+      name: 'Ricardo Silva',
+      location: 'Oka Gym',
+      status: 'Confirmado',
+      period: '2019-11-21 09:30',
+      profileImage: 'https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1100&q=80',
+    }, {
+      name: 'Amanda Neves',
+      location: 'Oka Gym',
+      status: 'A Confirmar',
+      period: '2019-11-21 13:30',
+      profileImage: 'https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1100&q=80',
+    }, {
+      name: 'Tiago Barros',
+      location: 'Oka Gym',
+      status: 'A Confirmar',
+      period: '2019-11-21 16:30',
+      profileImage: 'https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1100&q=80',
+    }, {
+      name: 'Ricardo Silva',
+      location: 'Oka Gym',
+      status: 'Confirmado',
+      period: '2019-11-21 09:30',
+      profileImage: 'https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1100&q=80',
+    }, {
+      name: 'Amanda Neves',
+      location: 'Oka Gym',
+      status: 'A Confirmar',
+      period: '2019-11-21 13:30',
+      profileImage: 'https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1100&q=80',
+    }, {
+      name: 'Tiago Barros',
+      location: 'Oka Gym',
+      status: 'A Confirmar',
+      period: '2019-11-21 16:30',
+      profileImage: 'https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1100&q=80',
+    },
+  ];
+
+  const items = [...new Set(data.map((e) => moment(e.period).format('YYYY-MM-DD')))];
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <Agenda
-        data={[1, 2, 3]}
+        data={data}
+        items={items}
         loading={fetchingData}
         renderItem={renderItem}
         refreshControl={refreshControl}
@@ -52,10 +144,9 @@ function App() {
           color: 'rgba(251, 131, 51, 1)',
         }}
         calendarProps={{
-          onSelectDate: fakeFetch,
           hasKnob: true,
+          onSelectDate: fakeFetch,
           knobColor: 'rgba(251, 131, 51, 1)',
-          items: ['2019-11-15', '2019-11-21'],
           selectedDateBackgroundColor: 'rgba(251, 131, 51, 1)',
           selectedWeekBackgroundColor: 'rgba(251, 131, 51, 0.1)',
         }}

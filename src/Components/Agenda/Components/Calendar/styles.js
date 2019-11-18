@@ -1,7 +1,12 @@
 import { StyleSheet } from 'react-native';
 
 const styles = StyleSheet.create({
-  container: { borderBottomColor: 'rgba(0,0,0,.1)', borderBottomWidth: 1, paddingVertical: 5 },
+  container: {
+    paddingVertical: 5,
+    borderBottomWidth: 1,
+    zIndex: 2,
+    borderBottomColor: 'rgba(0,0,0,.1)',
+  },
   headerContainer: { flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 15 },
   headerMonth: { fontSize: 18, fontWeight: 'bold', textAlign: 'center' },
   headerYear: { fontSize: 18, textAlign: 'center' },
