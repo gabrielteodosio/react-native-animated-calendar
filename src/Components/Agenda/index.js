@@ -109,11 +109,7 @@ function Agenda({
         <ActivityIndicator {...activityIndicatorProps} />
       ) : (
         <>
-          {typeof dataTitle === 'string' ? (
-            <Text style={{ fontWeight: 'bold' }}>
-              {dataTitle}
-            </Text>
-          ) : undefined}
+          {dataTitle}
           <FlatList
             data={data}
             refreshing={refreshing}
@@ -131,7 +127,7 @@ function Agenda({
 Agenda.propTypes = {
   data: PropTypes.array,
   items: PropTypes.array,
-  dataTitle: PropTypes.string,
+  dataTitle: PropTypes.element,
   onSelectDate: PropTypes.func,
   hasToggleButton: PropTypes.bool,
   toggleButtonIcon: PropTypes.oneOfType([
