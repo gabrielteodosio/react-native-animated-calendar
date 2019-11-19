@@ -5,6 +5,16 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingVertical: 5,
   },
+  container: { flex: 1 },
+  headerContainer: {
+    paddingHorizontal: 15,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  headerTitle: {
+    fontSize: 33,
+  },
 });
 
 export default styles;

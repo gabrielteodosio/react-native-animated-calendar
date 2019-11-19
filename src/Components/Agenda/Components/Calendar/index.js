@@ -174,6 +174,7 @@ class Calendar extends React.Component {
       knobColor,
       dataStyle,
       vocabulary: { months },
+      fontFamily,
     } = this.props;
 
     const { activeDate, selectedDate, expanded, matrix } = this.state;
@@ -185,12 +186,14 @@ class Calendar extends React.Component {
             <Text style={[
               { ...styles.headerMonth, ...headerMonthStyle },
               { color: dataStyle === 'light' ? 'black' : 'white' },
+              fontFamily ? { fontFamily } : undefined
             ]}>
               {months[activeDate.month()]} &nbsp;
             </Text>
             <Text style={[
               { ...styles.headerYear, ...headerYearStyle },
               { color: dataStyle === 'light' ? 'black' : 'white' },
+              fontFamily ? { fontFamily } : undefined
             ]}>
               {activeDate.year()}
             </Text>
@@ -206,7 +209,7 @@ class Calendar extends React.Component {
                     style={{ ...styles.arrowLeftContainer, ...arrowLeftContainerStyle }}
                   >
                     {leftArrow || (
-                      <Text style={{ color: 'black' }}>
+                      <Text style={{ color: dataStyle === 'light' ? 'rgb(19, 27, 34)' : 'rgb(232, 232, 232)' }}>
                         {'<'}
                       </Text>
                     )}
@@ -273,6 +276,7 @@ class Calendar extends React.Component {
                     style={[
                       itemStyle,
                       { fontSize: 14 },
+                      fontFamily ? { fontFamily } : undefined
                     ]}
                   >
                     {item !== -1 ? item : undefined}
@@ -347,6 +351,7 @@ export const CalendarPropTypes = Calendar.propTypes = {
   }),
   dataStyle: PropTypes.oneOf(['light', 'dark']),
   onChangeExpanded: PropTypes.func.isRequired,
+  fontFamily: PropTypes.string,
 };
 
 export const CalendarDefaultProps = Calendar.defaultProps = {
@@ -379,6 +384,7 @@ export const CalendarDefaultProps = Calendar.defaultProps = {
     ],
   },
   dataStyle: 'light',
+  fontFamily: undefined,
 };
 
 export default Calendar;

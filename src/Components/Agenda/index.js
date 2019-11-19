@@ -47,6 +47,7 @@ function Agenda({
   toggleButtonIcon,
   appointmentListStyle,
   activityIndicatorProps,
+  fontFamily,
 }) {
   const calendarRef = useRef();
   const [expanded, setExpanded] = useState(CalendarDefaultProps.defaultExpanded);
@@ -68,11 +69,17 @@ function Agenda({
   }
 
   return (
-    <View style={{ flex: 1 }}>
+    <View style={styles.container}>
       <View
-        style={{ paddingHorizontal: 15, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}
+        style={styles.headerContainer}
       >
-        <Text style={{ fontSize: 33, color: dataStyle === 'light' ? 'rgb(36, 42, 50)' : 'white' }}>
+        <Text
+          style={[
+            styles.headerTitle,
+            { color: dataStyle === 'light' ? 'rgb(36, 42, 50)' : 'white' },
+            fontFamily ? { fontFamily } : undefined
+          ]}
+        >
           Agenda
         </Text>
         {hasToggleButton && toggleButtonIcon ? (
@@ -85,8 +92,8 @@ function Agenda({
             <TouchableContainer
               onPress={toggleCalendar}
               style={{
-                height: 40,
                 width: 40,
+                height: 40,
                 alignItems: 'center',
                 justifyContent: 'center',
               }}
@@ -100,9 +107,10 @@ function Agenda({
       </View>
       <Calendar
         {...calendarProps}
-        ref={calendarRef}
         items={items}
+        ref={calendarRef}
         dataStyle={dataStyle}
+        fontFamily={fontFamily}
         onChangeExpanded={setExpanded}
         onSelectDate={handleSelectDate}
         vocabulary={{ ...CalendarDefaultProps.vocabulary, ...vocabulary }}
@@ -144,6 +152,7 @@ Agenda.propTypes = {
   appointmentListStyle: PropTypes.object,
   calendarProps: PropTypes.object,
   dataStyle: PropTypes.oneOf(['light', 'dark']),
+  fontFamily: PropTypes.string,
 };
 
 Agenda.defaultProps = {
@@ -155,6 +164,7 @@ Agenda.defaultProps = {
   toggleButtonIcon: undefined,
   appointmentListStyle: undefined,
   dataStyle: 'light',
+  fontFamily: undefined,
 };
 
 export default Agenda;
