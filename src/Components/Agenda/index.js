@@ -91,7 +91,9 @@ function Agenda({
                 justifyContent: 'center',
               }}
             >
-              {toggleButtonIcon(expanded)}
+              {typeof toggleButtonIcon === 'function' ? (
+                toggleButtonIcon(expanded)
+              ) : toggleButtonIcon}
             </TouchableContainer>
           </View>
         ) : null}
@@ -109,7 +111,9 @@ function Agenda({
         <ActivityIndicator {...activityIndicatorProps} />
       ) : (
         <>
-          {dataTitle}
+          {typeof dataTitle === 'function' ? (
+            dataTitle(expanded)
+          ) : dataTitle}
           <FlatList
             data={data}
             refreshing={refreshing}
@@ -127,7 +131,10 @@ function Agenda({
 Agenda.propTypes = {
   data: PropTypes.array,
   items: PropTypes.array,
-  dataTitle: PropTypes.element,
+  dataTitle: PropTypes.oneOfType([
+    PropTypes.func,
+    PropTypes.element
+  ]),
   onSelectDate: PropTypes.func,
   hasToggleButton: PropTypes.bool,
   toggleButtonIcon: PropTypes.oneOfType([
