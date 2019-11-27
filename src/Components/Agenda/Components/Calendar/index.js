@@ -140,6 +140,7 @@ class Calendar extends React.Component {
   handlePreviousPress = () => {
     const { activeDate } = this.state;
     const {
+      onChangeMonth,
       vocabulary: { weekDays },
     } = this.props;
 
