@@ -68,8 +68,11 @@ function App() {
   }
 
   const refreshControl = (
-    <RefreshControl style={{ zIndex: -1 }} refreshing={refreshing} onRefresh={onRefresh}
-                    colors={['rgba(251, 131, 51, 1)']}/>
+    <RefreshControl
+      onRefresh={onRefresh}
+      refreshing={refreshing}
+      colors={['rgba(251, 131, 51, 1)']}
+    />
   );
 
   const items = [...new Set(data.map((e) => moment(e.period).format('YYYY-MM-DD')))];
