@@ -80,6 +80,11 @@ function App() {
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <Agenda
+        header={
+          <Text>
+            Agenda
+          </Text>
+        }
         data={data}
         items={items}
         hasToggleButton

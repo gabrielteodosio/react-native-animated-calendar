@@ -1,6 +1,9 @@
 import React from 'react';
 import moment from 'moment';
 import PropTypes from 'prop-types';
+import _ from 'lodash';
+import { FlingGestureHandler, Directions, State } from 'react-native-gesture-handler';
+
 import {
   View,
   Text,
@@ -124,7 +127,7 @@ class Calendar extends React.Component {
     }
   };
 
-  handleNextPress = () => {
+  handleNextPress = _.debounce(() => {
     const { activeDate } = this.state;
     const {
       onChangeMonth,
@@ -135,9 +138,9 @@ class Calendar extends React.Component {
       onChangeMonth(this.state.activeDate),
     );
     this.setMatrix(generateMatrix(weekDays, activeDate));
-  };
+  }, 200);
 
-  handlePreviousPress = () => {
+  handlePreviousPress = _.debounce(() => {
     const { activeDate } = this.state;
     const {
       onChangeMonth,
@@ -148,7 +151,7 @@ class Calendar extends React.Component {
       onChangeMonth(this.state.activeDate),
     );
     this.setMatrix(generateMatrix(weekDays, activeDate));
-  };
+  }, 200);
 
   // Collapse and Reverse
   changeLayout = () => {
@@ -285,119 +288,133 @@ class Calendar extends React.Component {
           ) : null}
         </View>
 
-        {/* Calendar rendering */}
-        {matrix.map((row, rowIndex) => {
-          const rowSelected =
-            selectedDate.month() === activeDate.month() &&
-            selectedDate.year() === activeDate.year() &&
-            row.includes(selectedDate.date());
-
-          const rowItems = row.map((item, colIndex) => {
-            // item is the date on a slot
-            const itemSelected =
-              item === selectedDate.date() &&
-              selectedDate.month() === activeDate.month() &&
-              selectedDate.year() === activeDate.year();
-
-            // Sunday, Monday, Tuesday, Wednesday, Thursday, Friday
-            const isWeekDays = rowIndex === 0;
-
-            // If `isWeekDay` is true, then it's not a Touchable component
-            const Touchable =
-              isWeekDays || item === -1 ? View : TouchableOpacity;
-
-            const itemStyle = !itemSelected
-              ? {
-                color: isWeekDays
-                  ? dataStyle === 'light'
-                    ? 'rgba(19, 27, 34, 0.2)'
-                    : 'rgba(232, 232, 232, 0.2)'
-                  : dataStyle === 'light'
-                    ? 'rgb(19, 27, 34)'
-                    : 'rgb(232, 232, 232)',
-              }
-              : {
-                color:
-                    dataStyle === 'light'
-                      ? 'rgb(19, 27, 34)'
-                      : 'rgb(232, 232, 232)',
-                fontWeight: 'bold',
-              };
-
-            // A unique day
-            return (
-              <Touchable
-                style={{ flex: 1 }}
-                key={`col-${colIndex}`}
-                onPress={() => this.handleDatePress(item, rowIndex)}
-              >
-                <View
-                  style={{
-                    ...styles.day,
-                    ...dayStyle,
-                    height:
-                      !rowSelected && !expanded && rowIndex !== 0 ? 0 : 40,
-                    backgroundColor: itemSelected
-                      ? selectedDateBackgroundColor
-                      : undefined,
-                  }}
-                >
-                  <Text
-                    style={[
-                      itemStyle,
-                      { fontSize: 14 },
-                      fontFamily ? { fontFamily } : undefined,
-                    ]}
-                  >
-                    {item !== -1 ? item : undefined}
-                  </Text>
-                  {this.renderDot(item)}
-                </View>
-              </Touchable>
-            );
-          });
-
-          return (
-            <View
-              key={`row-${rowIndex}`}
-              style={{
-                height: !rowSelected && !expanded && rowIndex !== 0 ? 0 : 40,
-                marginBottom: rowIndex === 0 ? 5 : undefined,
-              }}
+        <FlingGestureHandler
+          direction={Directions.RIGHT}
+          onHandlerStateChange={expanded ? this.handlePreviousPress : () => {}}
+        >
+          <View>
+            <FlingGestureHandler
+              direction={Directions.LEFT}
+              onHandlerStateChange={expanded ? this.handleNextPress : () => {}}
             >
-              {/* Week line */}
-              <View
-                style={{
-                  ...styles.week,
-                  backgroundColor: rowSelected
-                    ? selectedWeekBackgroundColor
-                    : undefined,
-                }}
-              >
-                {rowItems}
+              <View>
+                {/* Calendar rendering */}
+                {matrix.map((row, rowIndex) => {
+                  const rowSelected =
+                    selectedDate.month() === activeDate.month() &&
+                    selectedDate.year() === activeDate.year() &&
+                    row.includes(selectedDate.date());
+
+                  const rowItems = row.map((item, colIndex) => {
+                    // item is the date on a slot
+                    const itemSelected =
+                      item === selectedDate.date() &&
+                      selectedDate.month() === activeDate.month() &&
+                      selectedDate.year() === activeDate.year();
+
+                    // Sunday, Monday, Tuesday, Wednesday, Thursday, Friday
+                    const isWeekDays = rowIndex === 0;
+
+                    // If `isWeekDay` is true, then it's not a Touchable component
+                    const Touchable =
+                      isWeekDays || item === -1 ? View : TouchableOpacity;
+
+                    const itemStyle = !itemSelected
+                      ? {
+                        color: isWeekDays
+                          ? dataStyle === 'light'
+                            ? 'rgba(19, 27, 34, 0.2)'
+                            : 'rgba(232, 232, 232, 0.2)'
+                          : dataStyle === 'light'
+                            ? 'rgb(19, 27, 34)'
+                            : 'rgb(232, 232, 232)',
+                      }
+                      : {
+                        color:
+                          dataStyle === 'light'
+                            ? 'rgb(19, 27, 34)'
+                            : 'rgb(232, 232, 232)',
+                        fontWeight: 'bold',
+                      };
+
+                    // A unique day
+                    return (
+                      <Touchable
+                        style={{ flex: 1 }}
+                        key={`col-${colIndex}`}
+                        onPress={() => this.handleDatePress(item, rowIndex)}
+                      >
+                        <View
+                          style={{
+                            ...styles.day,
+                            ...dayStyle,
+                            height:
+                              !rowSelected && !expanded && rowIndex !== 0 ? 0 : 40,
+                            backgroundColor: itemSelected
+                              ? selectedDateBackgroundColor
+                              : undefined,
+                          }}
+                        >
+                          <Text
+                            style={[
+                              itemStyle,
+                              { fontSize: 14 },
+                              fontFamily ? { fontFamily } : undefined,
+                            ]}
+                          >
+                            {item !== -1 ? item : undefined}
+                          </Text>
+                          {this.renderDot(item)}
+                        </View>
+                      </Touchable>
+                    );
+                  });
+
+                  return (
+                    <View
+                      key={`row-${rowIndex}`}
+                      style={{
+                        marginBottom: rowIndex === 0 ? 5 : undefined,
+                        height: !rowSelected && !expanded && rowIndex !== 0 ? 0 : 40,
+                      }}
+                    >
+                      {/* Week line */}
+                      <View
+                        style={{
+                          ...styles.week,
+                          backgroundColor: rowSelected
+                            ? selectedWeekBackgroundColor
+                            : undefined,
+                        }}
+                      >
+                        {rowItems}
+                      </View>
+
+                      {/* Simple horizontal bar */}
+                      {rowIndex === 0 && (
+                        <View
+                          style={{
+                            height: 1,
+                            backgroundColor: 'rgba(0,0,0,.1)',
+                            width: '100%',
+                          }}
+                        />
+                      )}
+                    </View>
+                  );
+                })}
+
+                {hasKnob && (
+                  /* Knob Component */
+                  <TouchableOpacity
+                    onPress={this.changeLayout}
+                    style={{ ...styles.knob, backgroundColor: knobColor }}
+                  />
+                )}
               </View>
-
-              {/* Simple horizontal bar */}
-              {rowIndex === 0 && (
-                <View
-                  style={{
-                    height: 1,
-                    backgroundColor: 'rgba(0,0,0,.1)',
-                    width: '100%',
-                  }}
-                />
-              )}
-            </View>
-          );
-        })}
-
-        {hasKnob && (
-          /* Knob Component */
-          <TouchableOpacity
-            onPress={this.changeLayout}
-            style={{ ...styles.knob, backgroundColor: knobColor }}
-          />
-        )}
+            </FlingGestureHandler>
+          </View>
+        </FlingGestureHandler>
       </View>
     );
   }
@@ -434,7 +451,8 @@ export const CalendarPropTypes = (Calendar.propTypes = {
 });
 
 export const CalendarDefaultProps = (Calendar.defaultProps = {
-  onSelectDate: () => {},
+  onSelectDate: () => {
+  },
   markers: [],
   style: {},
   headerContainerStyle: {},
@@ -467,7 +485,8 @@ export const CalendarDefaultProps = (Calendar.defaultProps = {
     weekDays: ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'],
   },
   dataStyle: 'light',
-  onChangeMonth: () => {},
+  onChangeMonth: () => {
+  },
 });
 
 export default Calendar;
