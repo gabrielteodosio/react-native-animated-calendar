@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import {
   FlatList,
@@ -10,7 +10,7 @@ import {
   TouchableNativeFeedback,
 } from 'react-native';
 
-import Calendar, { CalendarDefaultProps, CalendarPropTypes } from './Components/Calendar';
+import Calendar, { CalendarDefaultProps, CalendarPropTypes } from '../Calendar';
 import styles from './styles';
 
 function TouchableAndroid({ disabled, onPress, useForeground, rippleColor, borderless, children, ...props }) {
@@ -48,6 +48,7 @@ function Agenda({
   appointmentListStyle,
   activityIndicatorProps,
   fontFamily,
+  header,
 }) {
   const calendarRef = useRef();
   const [expanded, setExpanded] = useState(CalendarDefaultProps.defaultExpanded);
@@ -70,25 +71,12 @@ function Agenda({
 
   return (
     <View style={styles.container}>
-      <View
-        style={styles.headerContainer}
-      >
-        <Text
-          style={[
-            styles.headerTitle,
-            { color: dataStyle === 'light' ? 'rgb(36, 42, 50)' : 'white' },
-            fontFamily ? { fontFamily } : undefined
-          ]}
-        >
-          Agenda
-        </Text>
+      <View style={styles.headerContainer}>
+        {typeof header === 'function' ? (
+          header(expanded)
+        ) : header}
         {hasToggleButton && toggleButtonIcon ? (
-          <View
-            style={{
-              overflow: 'hidden',
-              borderRadius: 20,
-            }}
-          >
+          <View style={{ overflow: 'hidden', borderRadius: 20 }}>
             <TouchableContainer
               onPress={toggleCalendar}
               style={{
@@ -153,18 +141,17 @@ Agenda.propTypes = {
   calendarProps: PropTypes.object,
   dataStyle: PropTypes.oneOf(['light', 'dark']),
   fontFamily: PropTypes.string,
+  header: PropTypes.oneOfType([
+    PropTypes.func,
+    PropTypes.element
+  ]),
 };
 
 Agenda.defaultProps = {
-  onSelectDate: () => {
-  },
-  calendarProps: undefined,
+  onSelectDate: () => {},
   items: [],
-  hasToggleButton: true,
-  toggleButtonIcon: undefined,
-  appointmentListStyle: undefined,
   dataStyle: 'light',
-  fontFamily: undefined,
+  hasToggleButton: true,
 };
 
 export default Agenda;

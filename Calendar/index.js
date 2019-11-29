@@ -436,9 +436,6 @@ export const CalendarPropTypes = (Calendar.propTypes = {
 export const CalendarDefaultProps = (Calendar.defaultProps = {
   onSelectDate: () => {},
   markers: [],
-  renderControlButtons: undefined,
-  rightArrow: undefined,
-  leftArrow: undefined,
   style: {},
   headerContainerStyle: {},
   headerMonthStyle: {},
@@ -452,7 +449,6 @@ export const CalendarDefaultProps = (Calendar.defaultProps = {
   knobColor: 'rgba(0,0,0,1)',
   defaultExpanded: false,
   hasToggleButton: true,
-  toggleButtonIcon: undefined,
   vocabulary: {
     months: [
       'Janeiro',
@@ -471,7 +467,6 @@ export const CalendarDefaultProps = (Calendar.defaultProps = {
     weekDays: ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'],
   },
   dataStyle: 'light',
-  fontFamily: undefined,
   onChangeMonth: () => {},
 });
 

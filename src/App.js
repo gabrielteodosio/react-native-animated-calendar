@@ -5,7 +5,7 @@ import React, { useState, useCallback, useEffect } from 'react';
 import { SafeAreaView, View, RefreshControl, Text, Image } from 'react-native';
 
 import { data } from './Utils/mock';
-import Agenda from './Components/Agenda';
+import Agenda from '../Agenda';
 
 const ITEM_HEIGHT = 80, ITEM_WIDTH = '100%';
 
@@ -88,7 +88,6 @@ function App() {
         renderItem={renderItem}
         refreshControl={refreshControl}
         toggleButtonIcon={(isExpanded) => {
-          console.tron.log({ isExpanded });
           return (
             <Text style={{ color: isExpanded ? 'rgba(251, 131, 51, 1)' : 'black' }}>Hello</Text>
           );

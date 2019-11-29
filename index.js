@@ -1,13 +1,13 @@
 /**
  * @format
  */
-import Calendar from './src/Components/Agenda/Components/Calendar';
-import Agenda from './src/Components/Agenda';
-
-export { Calendar, Agenda };
-
-// import { AppRegistry } from 'react-native';
-// import App from './src/App';
-// import { name as appName } from './app.json';
+// import Calendar from './Calendar';
+// import Agenda from './Agenda';
 //
-// AppRegistry.registerComponent(appName, () => App);
+// export { Calendar, Agenda };
+
+import { AppRegistry } from 'react-native';
+import App from './src/App';
+import { name as appName } from './app.json';
+
+AppRegistry.registerComponent(appName, () => App);
