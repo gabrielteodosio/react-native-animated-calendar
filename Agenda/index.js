@@ -38,6 +38,7 @@ function Agenda({
   refreshing,
   refreshControl,
   data,
+  collapsedData,
   items,
   dataTitle,
   dataStyle,
@@ -49,6 +50,7 @@ function Agenda({
   activityIndicatorProps,
   fontFamily,
   header,
+  hasMultipleDataEntries,
 }) {
   const calendarRef = useRef();
   const [expanded, setExpanded] = useState(CalendarDefaultProps.defaultExpanded);
@@ -68,6 +70,10 @@ function Agenda({
   function toggleCalendar() {
     calendarRef.current.changeLayout();
   }
+
+  const listData = hasMultipleDataEntries
+    ? (expanded ? data : collapsedData)
+    : data;
 
   return (
     <View style={styles.container}>
@@ -111,7 +117,7 @@ function Agenda({
             dataTitle(expanded)
           ) : dataTitle}
           <FlatList
-            data={data}
+            data={listData}
             refreshing={refreshing}
             renderItem={renderScrollItems}
             refreshControl={refreshControl}
@@ -145,6 +151,7 @@ Agenda.propTypes = {
     PropTypes.func,
     PropTypes.element
   ]),
+  hasMultipleDataEntries: PropTypes.bool.isRequired,
 };
 
 Agenda.defaultProps = {
@@ -152,6 +159,7 @@ Agenda.defaultProps = {
   items: [],
   dataStyle: 'light',
   hasToggleButton: true,
+  hasMultipleDataEntries: false,
 };
 
 export default Agenda;
