@@ -2,7 +2,6 @@ import React, { useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import {
   FlatList,
-  Text,
   View,
   Platform,
   TouchableOpacity,
@@ -10,7 +9,7 @@ import {
   TouchableNativeFeedback,
 } from 'react-native';
 
-import Calendar, { CalendarDefaultProps, CalendarPropTypes } from '../Calendar';
+import Calendar, { CalendarDefaultProps } from '../Calendar';
 import styles from './styles';
 
 function TouchableAndroid({ disabled, onPress, useForeground, rippleColor, borderless, children, ...props }) {

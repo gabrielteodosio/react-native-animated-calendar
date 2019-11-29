@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { createRef } from 'react';
 import moment from 'moment';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
@@ -90,6 +90,8 @@ class Calendar extends React.Component {
     ) {
       UIManager.setLayoutAnimationEnabledExperimental(true);
     }
+
+    this.leftFlingGestureHandler = createRef();
   }
 
   componentDidMount() {
@@ -290,11 +292,13 @@ class Calendar extends React.Component {
 
         <FlingGestureHandler
           direction={Directions.RIGHT}
+          waitFor={this.leftFlingGestureHandler}
           onHandlerStateChange={expanded ? this.handlePreviousPress : () => {}}
         >
           <View>
             <FlingGestureHandler
               direction={Directions.LEFT}
+              ref={this.leftFlingGestureHandler}
               onHandlerStateChange={expanded ? this.handleNextPress : () => {}}
             >
               <View>
@@ -451,8 +455,7 @@ export const CalendarPropTypes = (Calendar.propTypes = {
 });
 
 export const CalendarDefaultProps = (Calendar.defaultProps = {
-  onSelectDate: () => {
-  },
+  onSelectDate: () => {},
   markers: [],
   style: {},
   headerContainerStyle: {},
@@ -485,8 +488,7 @@ export const CalendarDefaultProps = (Calendar.defaultProps = {
     weekDays: ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'],
   },
   dataStyle: 'light',
-  onChangeMonth: () => {
-  },
+  onChangeMonth: () => {},
 });
 
 export default Calendar;
